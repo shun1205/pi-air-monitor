@@ -1,0 +1,2 @@
+influxdb-client>=1.40.0
+smbus2>=0.4.3

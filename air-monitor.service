@@ -1,0 +1,23 @@
+[Unit]
+Description=Air Monitor (SHT35 + SPS30 -> InfluxDB)
+After=network-online.target influxdb.service
+Wants=network-online.target influxdb.service
+
+[Service]
+Type=simple
+User=pi
+Group=i2c
+WorkingDirectory=/opt/air-monitor
+EnvironmentFile=/etc/default/air-monitor
+ExecStart=/opt/air-monitor/venv/bin/python /opt/air-monitor/collector.py
+Restart=always
+RestartSec=5
+# I2C デバイスへの読み書きを許可
+SupplementaryGroups=i2c
+
+# ログは journald へ
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
