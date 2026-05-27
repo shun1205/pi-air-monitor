@@ -258,6 +258,50 @@ sudo rm /etc/default/air-monitor
 # 完全撤去:
 sudo apt purge -y influxdb2 grafana
 ```
+kajima1205@raspberrypi:~/pi-air-monitor $ startx
+
+
+X.Org X Server 1.21.1.16
+X Protocol Version 11, Revision 0
+Current Operating System: Linux raspberrypi 6.12.75+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64
+Kernel command line: coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_headphones=0 cgroup_disable=memory numa_policy=interleave nvme.max_host_mem_size_mb=0 snd_bcm2835.enable_headphones=1 snd_bcm2835.enable_hdmi=1 snd_bcm2835.enable_hdmi=0  numa=fake=2 system_heap.max_order=0 iommu_dma_numa_policy=interleave smsc95xx.macaddr=2C:CF:67:8F:EF:96 vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000  console=ttyS0,115200 console=tty1 root=PARTUUID=0b3c6ca0-02 rootfstype=ext4 fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles ds=nocloud;i=rpi-imager-1779457998624 cfg80211.ieee80211_regdom=JP
+xorg-server 2:21.1.16-1.3+rpt1+deb13u1 (https://www.debian.org/support) 
+Current version of pixman: 0.46.4
+	Before reporting problems, check http://wiki.x.org
+	to make sure that you have the latest version.
+Markers: (--) probed, (**) from config file, (==) default setting,
+	(++) from command line, (!!) notice, (II) informational,
+	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
+(==) Log file: "/home/kajima1205/.local/share/xorg/Xorg.1.log", Time: Wed May 27 15:37:05 2026
+(==) Using config directory: "/etc/X11/xorg.conf.d"
+(==) Using system config directory "/usr/share/X11/xorg.conf.d"
+(EE) 
+Fatal server error:
+(EE) parse_vt_settings: Cannot open /dev/tty0 (Permission denied)
+(EE) 
+(EE) 
+Please consult the The X.Org Foundation support 
+	 at http://wiki.x.org
+ for help. 
+(EE) Please also check the log file at "/home/kajima1205/.local/share/xorg/Xorg.1.log" for additional information.
+(EE) 
+(EE) Server terminated with error (1). Closing log file.
+xinit: giving up
+xinit: unable to connect to X server: Connection refused
+xinit: server error
+Couldn't get a file descriptor referring to the console.
+kajima1205@raspberrypi:~/pi-air-monitor $ sudo systemctl start lightdm
+kajima1205@raspberrypi:~/pi-air-monitor $ chromium-browser http://localhost:8086 &
+[1] 2606
+kajima1205@raspberrypi:~/pi-air-monitor $ bash: chromium-browser: command not found
+
+[1]+  Exit 127                chromium-browser http://localhost:8086
+kajima1205@raspberrypi:~/pi-air-monitor $ chromium-browser http://localhost:3000 &
+[1] 2758
+kajima1205@raspberrypi:~/pi-air-monitor $ bash: chromium-browser: command not found
+
+[1]+  Exit 127                chromium-browser http://localhost:3000
+kajima1205@raspberrypi:~/pi-air-monitor $ sudo journalctl -u air-monitor -f
 
 May 27 15:39:52 raspberrypi (python)[2935]: air-monitor.service: Failed to determine user credentials: No such process
 May 27 15:39:52 raspberrypi (python)[2935]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
