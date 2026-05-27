@@ -259,8 +259,43 @@ sudo rm /etc/default/air-monitor
 sudo apt purge -y influxdb2 grafana
 ```
 
-kajima1205@raspberrypi:~/pi-air-monitor $ sudo bash setup_pi.sh
-[INFO]  アーキテクチャ: arm64
-[INFO]  APT を更新中...
-W: OpenPGP signature verification failed: https://repos.influxdata.com/debian stable InRelease: Sub-process /usr/bin/sqv returned an error code (1), error message is: Missing key AC10D7449F343ADCEFDDC2B6DA61C26A0585BD3B, which is needed to verify signature.
-E: The repository 'https://repos.influxdata.com/debian stable InRelease' is not signed.
+May 27 15:39:52 raspberrypi (python)[2935]: air-monitor.service: Failed to determine user credentials: No such process
+May 27 15:39:52 raspberrypi (python)[2935]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
+May 27 15:39:52 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
+May 27 15:39:52 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
+^AMay 27 15:39:58 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 50.
+May 27 15:39:58 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
+May 27 15:39:58 raspberrypi (python)[2936]: air-monitor.service: Failed to determine user credentials: No such process
+May 27 15:39:58 raspberrypi (python)[2936]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
+May 27 15:39:58 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
+May 27 15:39:58 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
+May 27 15:40:03 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 51.
+May 27 15:40:03 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
+May 27 15:40:03 raspberrypi (python)[2937]: air-monitor.service: Failed to determine user credentials: No such process
+May 27 15:40:03 raspberrypi (python)[2937]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
+May 27 15:40:03 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
+May 27 15:40:03 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
+May 27 15:40:08 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 52.
+May 27 15:40:08 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
+May 27 15:40:08 raspberrypi (python)[2938]: air-monitor.service: Failed to determine user credentials: No such process
+May 27 15:40:08 raspberrypi (python)[2938]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
+May 27 15:40:08 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
+May 27 15:40:08 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
+May 27 15:40:13 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 53.
+May 27 15:40:13 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
+May 27 15:40:13 raspberrypi (python)[2939]: air-monitor.service: Failed to determine user credentials: No such process
+May 27 15:40:13 raspberrypi (python)[2939]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
+May 27 15:40:13 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
+May 27 15:40:13 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
+May 27 15:40:19 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 54.
+May 27 15:40:19 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
+May 27 15:40:19 raspberrypi (python)[2940]: air-monitor.service: Failed to determine user credentials: No such process
+May 27 15:40:19 raspberrypi (python)[2940]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
+May 27 15:40:19 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
+May 27 15:40:19 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
+May 27 15:40:24 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 55.
+May 27 15:40:24 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
+May 27 15:40:24 raspberrypi (python)[2941]: air-monitor.service: Failed to determine user credentials: No such process
+May 27 15:40:24 raspberrypi (python)[2941]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
+May 27 15:40:24 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
+May 27 15:40:24 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
