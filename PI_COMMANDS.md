@@ -246,6 +246,34 @@ sudo apt purge -y influxdb2 grafana
 
 
 
-vcgencmd get_throttled
-vcgencmd measure_volts core
-sudo dmesg | grep -iE "under|throttl|voltage" | tail -10
+良いニュース：公式電源なので電力不足はまず起きません。ケースファン共有も Pi 4 公式電源で十分まかなえます。
+
+結論：たぶん異常なし
+SPS30 のファンについて
+SPS30 の**流量はわずか 1L/min（0.6 SLPM）**で、ティッシュを動かすほどの風量は出ません。
+データが時系列で変動している = 内部で粒子が動いている = ファンは回っています（人間の感覚では分からないだけ）。
+
+確かめたければ：
+
+
+cd ~/pi-air-monitor
+python3 test_sensors.py
+を実行しながら、SPS30 の吸気口に息を吹きかけてみてください。PM 値が急上昇するはず（息に水分とエアロゾルが含まれるので）。それで反応すれば確実にファンは動いています。
+
+ケースファンが「起動時に回ってすぐ止まる」現象
+これは正常動作です。
+
+Pi 5 や一部 Pi 4 ケースは「温度連動制御ファン」が標準
+起動時に自己診断で 1〜2 秒回って、温度が低ければ自動的に止まる
+CPU 温度が閾値（通常 50〜60°C）を超えると自動的に再起動
+念のため確認したければ：
+
+
+vcgencmd get_throttled    # 0x0 なら問題なし
+vcgencmd measure_temp     # 現在のCPU温度
+ということで、ハードウェアは健全と判断します。次のフェーズ（フル環境構築）に進んでOKです：
+
+
+cd ~/pi-air-monitor
+sudo bash setup_pi.sh
+💡 もし 息吹きかけテストで PM 値が変動しなかったら、その時に再度ファン疑惑を調査します。
