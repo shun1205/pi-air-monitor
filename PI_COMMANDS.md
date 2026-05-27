@@ -138,16 +138,32 @@ sudo bash setup_pi.sh
 
 完了後の手順（スクリプト末尾にも表示される）：
 
+### 5-0. Pi 本体のブラウザで開く（PCから到達できないとき推奨）
+
+スマホテザリング下では PC ⇔ Pi の直接通信が遮断されるので、**Pi の HDMI モニタ + Chromium** で操作する：
+
+```bash
+# デスクトップ環境がまだ起動していない場合
+startx
+# または:
+sudo systemctl start lightdm
+
+# Chromium で InfluxDB を開く（5-1 で使う）
+chromium-browser http://localhost:8086 &
+
+# Chromium で Grafana を開く（5-4 で使う）
+chromium-browser http://localhost:3000 &
+```
+
+> 💡 Bookworm Full 版なら Chromium はプリインストール済み。Lite 版だと `sudo apt install -y chromium-browser` で導入。
+
 ### 5-1. InfluxDB 初期化
 
-PC のブラウザで `http://<PiのIP>:8086` を開く。
+ブラウザ（PC 側 `http://<PiのIP>:8086` または Pi 本体 `http://localhost:8086`）で開く。
 - Username/Password: 任意（覚えておく）
 - Organization: **home**
 - Bucket: **airquality**
 - Continue → API Token をコピー
-
-> ⚠️ PC とPi が同じネットワークでないとブラウザで開けない。
-> その場合は Pi 上の `chromium-browser http://localhost:8086` で開く（HDMI モニタ必要）。
 
 ### 5-2. 環境変数設定
 
@@ -170,7 +186,7 @@ sudo journalctl -u air-monitor -f
 
 ### 5-4. Grafana セットアップ
 
-PC のブラウザで `http://<PiのIP>:3000`（admin/admin、要パスワード変更）
+ブラウザ（PC 側 `http://<PiのIP>:3000` または Pi 本体 `http://localhost:3000`）で開く（admin/admin、要パスワード変更）
 
 詳細手順は [README.md](./README.md#7-grafana-セットアップ) の「7. Grafana セットアップ」を参照。
 
