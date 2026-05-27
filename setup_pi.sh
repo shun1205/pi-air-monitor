@@ -63,10 +63,20 @@ ok "I2C 設定完了"
 # ---- 3. InfluxDB 2.x インストール ----
 if ! command -v influxd >/dev/null 2>&1; then
     log "InfluxDB 2.x インストール中..."
-    # InfluxData の公式リポジトリ追加
-    wget -qO /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg https://repos.influxdata.com/influxdata-archive_compat.key
-    echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https://repos.influxdata.com/debian stable main' \
+    # 古い鍵/リポジトリ設定をクリーンアップ
+    rm -f /etc/apt/sources.list.d/influxdata.list
+    rm -f /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg
+    rm -f /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+
+    # 新しい署名鍵（2024-）を取得して dearmor
+    curl -fsSL https://repos.influxdata.com/influxdata-archive.key \
+        | gpg --dearmor -o /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+    chmod 644 /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+
+    # リポジトリ追加
+    echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main' \
         > /etc/apt/sources.list.d/influxdata.list
+
     apt-get update -qq
     apt-get install -y influxdb2 influxdb2-cli
     systemctl enable --now influxdb
@@ -78,7 +88,10 @@ fi
 # ---- 4. Grafana インストール ----
 if ! command -v grafana-server >/dev/null 2>&1; then
     log "Grafana インストール中..."
-    wget -qO /etc/apt/trusted.gpg.d/grafana.gpg https://apt.grafana.com/gpg.key
+    rm -f /etc/apt/trusted.gpg.d/grafana.gpg
+    curl -fsSL https://apt.grafana.com/gpg.key \
+        | gpg --dearmor -o /etc/apt/trusted.gpg.d/grafana.gpg
+    chmod 644 /etc/apt/trusted.gpg.d/grafana.gpg
     echo "deb [signed-by=/etc/apt/trusted.gpg.d/grafana.gpg] https://apt.grafana.com stable main" \
         > /etc/apt/sources.list.d/grafana.list
     apt-get update -qq
