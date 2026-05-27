@@ -261,85 +261,45 @@ sudo apt purge -y influxdb2 grafana
 kajima1205@raspberrypi:~/pi-air-monitor $ startx
 
 
-X.Org X Server 1.21.1.16
-X Protocol Version 11, Revision 0
-Current Operating System: Linux raspberrypi 6.12.75+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64
-Kernel command line: coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_headphones=0 cgroup_disable=memory numa_policy=interleave nvme.max_host_mem_size_mb=0 snd_bcm2835.enable_headphones=1 snd_bcm2835.enable_hdmi=1 snd_bcm2835.enable_hdmi=0  numa=fake=2 system_heap.max_order=0 iommu_dma_numa_policy=interleave smsc95xx.macaddr=2C:CF:67:8F:EF:96 vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000  console=ttyS0,115200 console=tty1 root=PARTUUID=0b3c6ca0-02 rootfstype=ext4 fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles ds=nocloud;i=rpi-imager-1779457998624 cfg80211.ieee80211_regdom=JP
-xorg-server 2:21.1.16-1.3+rpt1+deb13u1 (https://www.debian.org/support) 
-Current version of pixman: 0.46.4
-	Before reporting problems, check http://wiki.x.org
-	to make sure that you have the latest version.
-Markers: (--) probed, (**) from config file, (==) default setting,
-	(++) from command line, (!!) notice, (II) informational,
-	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-(==) Log file: "/home/kajima1205/.local/share/xorg/Xorg.1.log", Time: Wed May 27 15:37:05 2026
-(==) Using config directory: "/etc/X11/xorg.conf.d"
-(==) Using system config directory "/usr/share/X11/xorg.conf.d"
-(EE) 
-Fatal server error:
-(EE) parse_vt_settings: Cannot open /dev/tty0 (Permission denied)
-(EE) 
-(EE) 
-Please consult the The X.Org Foundation support 
-	 at http://wiki.x.org
- for help. 
-(EE) Please also check the log file at "/home/kajima1205/.local/share/xorg/Xorg.1.log" for additional information.
-(EE) 
-(EE) Server terminated with error (1). Closing log file.
-xinit: giving up
-xinit: unable to connect to X server: Connection refused
-xinit: server error
-Couldn't get a file descriptor referring to the console.
-kajima1205@raspberrypi:~/pi-air-monitor $ sudo systemctl start lightdm
-kajima1205@raspberrypi:~/pi-air-monitor $ chromium-browser http://localhost:8086 &
-[1] 2606
-kajima1205@raspberrypi:~/pi-air-monitor $ bash: chromium-browser: command not found
+systemd の修正 push 完了。
 
-[1]+  Exit 127                chromium-browser http://localhost:8086
-kajima1205@raspberrypi:~/pi-air-monitor $ chromium-browser http://localhost:3000 &
-[1] 2758
-kajima1205@raspberrypi:~/pi-air-monitor $ bash: chromium-browser: command not found
+クイック修正をPiで実行（最優先）
 
-[1]+  Exit 127                chromium-browser http://localhost:3000
-kajima1205@raspberrypi:~/pi-air-monitor $ sudo journalctl -u air-monitor -f
+sudo sed -i "s/^User=.*/User=kajima1205/" /etc/systemd/system/air-monitor.service
+sudo systemctl daemon-reload
+sudo systemctl restart air-monitor
+sudo journalctl -u air-monitor -n 20 --no-pager
+これで Status=217/USER エラーは消えるはず。ただし、まだ INFLUX_TOKEN が設定されていないので、次は別エラーが出ます。
 
-May 27 15:39:52 raspberrypi (python)[2935]: air-monitor.service: Failed to determine user credentials: No such process
-May 27 15:39:52 raspberrypi (python)[2935]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
-May 27 15:39:52 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
-May 27 15:39:52 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
-^AMay 27 15:39:58 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 50.
-May 27 15:39:58 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
-May 27 15:39:58 raspberrypi (python)[2936]: air-monitor.service: Failed to determine user credentials: No such process
-May 27 15:39:58 raspberrypi (python)[2936]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
-May 27 15:39:58 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
-May 27 15:39:58 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
-May 27 15:40:03 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 51.
-May 27 15:40:03 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
-May 27 15:40:03 raspberrypi (python)[2937]: air-monitor.service: Failed to determine user credentials: No such process
-May 27 15:40:03 raspberrypi (python)[2937]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
-May 27 15:40:03 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
-May 27 15:40:03 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
-May 27 15:40:08 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 52.
-May 27 15:40:08 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
-May 27 15:40:08 raspberrypi (python)[2938]: air-monitor.service: Failed to determine user credentials: No such process
-May 27 15:40:08 raspberrypi (python)[2938]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
-May 27 15:40:08 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
-May 27 15:40:08 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
-May 27 15:40:13 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 53.
-May 27 15:40:13 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
-May 27 15:40:13 raspberrypi (python)[2939]: air-monitor.service: Failed to determine user credentials: No such process
-May 27 15:40:13 raspberrypi (python)[2939]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
-May 27 15:40:13 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
-May 27 15:40:13 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
-May 27 15:40:19 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 54.
-May 27 15:40:19 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
-May 27 15:40:19 raspberrypi (python)[2940]: air-monitor.service: Failed to determine user credentials: No such process
-May 27 15:40:19 raspberrypi (python)[2940]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
-May 27 15:40:19 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
-May 27 15:40:19 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
-May 27 15:40:24 raspberrypi systemd[1]: air-monitor.service: Scheduled restart job, restart counter is at 55.
-May 27 15:40:24 raspberrypi systemd[1]: Started air-monitor.service - Air Monitor (SHT35 + SPS30 -> InfluxDB).
-May 27 15:40:24 raspberrypi (python)[2941]: air-monitor.service: Failed to determine user credentials: No such process
-May 27 15:40:24 raspberrypi (python)[2941]: air-monitor.service: Failed at step USER spawning /opt/air-monitor/venv/bin/python: No such process
-May 27 15:40:24 raspberrypi systemd[1]: air-monitor.service: Main process exited, code=exited, status=217/USER
-May 27 15:40:24 raspberrypi systemd[1]: air-monitor.service: Failed with result 'exit-code'.
+InfluxDB セットアップを CLI でやる（ブラウザ不要）
+Chromium が入っていない & startx 失敗（Lite 版でデスクトップなし）の状況なので、ブラウザを使わずに CLI で InfluxDB をセットアップしましょう。これが一番速いです。
+
+
+# 対話せず一発で初期化
+influx setup \
+    --username admin \
+    --password 'ChangeMe123!' \
+    --org home \
+    --bucket airquality \
+    --retention 180d \
+    --force
+
+# 発行されたトークンを取得（このまま使える）
+TOKEN=$(influx auth list --user admin --hide-headers | awk '{print $4}')
+echo "TOKEN=$TOKEN"
+パスワード ChangeMe123! は任意のものに変更可。8文字以上にしてください。
+
+トークンが表示されたら、それを /etc/default/air-monitor に書き込みます：
+
+
+sudo cp ~/pi-air-monitor/air-monitor.env.example /etc/default/air-monitor
+sudo sed -i "s|INFLUX_TOKEN=.*|INFLUX_TOKEN=$TOKEN|" /etc/default/air-monitor
+cat /etc/default/air-monitor    # 中身を確認
+完了したら、コレクタを再起動：
+
+
+sudo systemctl restart air-monitor
+sudo journalctl -u air-monitor -f
+T=24.13°C RH=53.5% PM2.5=10.0µg/m³ ... のようなログが 10 秒ごとに出れば測定→DB 保存まで動いたことになります。
+
+その後の Grafana 設定は後回しにして、まず「データが流れる」ところまで持っていきましょう。結果を教えてください。
