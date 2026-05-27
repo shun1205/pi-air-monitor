@@ -17,9 +17,23 @@ from dataclasses import dataclass
 
 from smbus2 import SMBus, i2c_msg
 
-SHT35_ADDR = 0x44
+SHT35_ADDRS = (0x44, 0x45)   # ADDRピンが Low/High どちらでも対応
 SPS30_ADDR = 0x69
 I2C_BUS = 1
+
+
+def detect_sht35(bus) -> int:
+    """0x44 / 0x45 のうち応答があったアドレスを返す。見つからなければ例外。"""
+    for addr in SHT35_ADDRS:
+        try:
+            bus.i2c_rdwr(i2c_msg.write(addr, [0x24, 0x00]))
+            time.sleep(0.020)
+            msg = i2c_msg.read(addr, 6)
+            bus.i2c_rdwr(msg)
+            return addr
+        except OSError:
+            continue
+    raise IOError(f"SHT35 が見つからない (試したアドレス: {[hex(a) for a in SHT35_ADDRS]})")
 
 
 def sensirion_crc(data: bytes) -> int:
@@ -35,7 +49,7 @@ def sensirion_crc(data: bytes) -> int:
 class SHT35:
     CMD_MEASURE_HIGH = (0x24, 0x00)
 
-    def __init__(self, bus, addr=SHT35_ADDR):
+    def __init__(self, bus, addr):
         self.bus = bus
         self.addr = addr
 
@@ -133,15 +147,18 @@ def main():
         print("    → raspi-config で I2C を有効化、再起動を確認")
         return 1
 
-    # --- SHT35 単発テスト ---
-    print("[1/3] SHT35 (0x44) を読みます...")
+    # --- SHT35 アドレス検出＋単発テスト ---
+    print("[1/3] SHT35 (0x44/0x45 自動検出) を読みます...")
+    sht = None
     try:
-        sht = SHT35(bus)
+        addr = detect_sht35(bus)
+        print(f"      アドレス検出: 0x{addr:02X}")
+        sht = SHT35(bus, addr)
         t, h = sht.read()
         print(f"      OK  温度 {t:.2f}°C  湿度 {h:.1f}%RH\n")
     except Exception as e:
         print(f"      NG  {e}")
-        print(f"           → i2cdetect -y 1 で 0x44 が見えるか確認\n")
+        print(f"           → i2cdetect -y 1 で 0x44 か 0x45 が見えるか確認\n")
 
     # --- SPS30 起動 ---
     print("[2/3] SPS30 (0x69) を起動します...")
@@ -161,26 +178,30 @@ def main():
     print("      （初回 5-10 秒はウォームアップで値が安定しない）\n")
     print(f"      {'#':>3} | {'T':>6} | {'RH':>5} | {'PM1.0':>6} | {'PM2.5':>6} | {'PM4.0':>6} | {'PM10':>6} | size")
     print("      " + "-" * 78)
-    try:
-        for i in range(10):
-            t, h = sht.read()
-            pm = sps.read()
-            print(
-                f"      {i+1:>3} | {t:>5.2f}° | {h:>4.1f}% | "
-                f"{pm.pm1_0:>6.2f} | {pm.pm2_5:>6.2f} | {pm.pm4_0:>6.2f} | "
-                f"{pm.pm10:>6.2f} | {pm.typical_size:.2f}µm"
-            )
-            time.sleep(1.0)
-    except KeyboardInterrupt:
-        print("\n      中断")
-    except Exception as e:
-        print(f"\n      NG  読み出し中にエラー: {e}")
-    finally:
+    for i in range(10):
         try:
-            sps.stop()
-        except Exception:
-            pass
-        bus.close()
+            t_str = f"{sht.read()[0]:>5.2f}°" if sht else "  --- "
+            h_str = f"{sht.read()[1]:>4.1f}%" if sht else " --- "
+        except Exception as e:
+            t_str, h_str = "  ERR ", " ERR "
+        try:
+            pm = sps.read()
+            pm_line = (f"{pm.pm1_0:>6.2f} | {pm.pm2_5:>6.2f} | "
+                       f"{pm.pm4_0:>6.2f} | {pm.pm10:>6.2f} | {pm.typical_size:.2f}µm")
+        except Exception as e:
+            pm_line = f"SPS30 read エラー: {e}"
+        print(f"      {i+1:>3} | {t_str} | {h_str} | {pm_line}")
+        try:
+            time.sleep(1.0)
+        except KeyboardInterrupt:
+            print("\n      中断")
+            break
+
+    try:
+        sps.stop()
+    except Exception:
+        pass
+    bus.close()
 
     print("\n=== テスト完了 ===")
     print("値が妥当そうなら collector.py 本番運用に進めます。")

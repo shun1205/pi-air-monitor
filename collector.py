@@ -37,7 +37,7 @@ INTERVAL_SEC = float(os.environ.get("INTERVAL_SEC", "10"))
 I2C_BUS = int(os.environ.get("I2C_BUS", "1"))
 LOCATION = os.environ.get("LOCATION", "room1")
 
-SHT35_ADDR = 0x44
+SHT35_ADDRS = (0x44, 0x45)   # ADDRピン Low/High どちらでも対応
 SPS30_ADDR = 0x69
 
 logging.basicConfig(
@@ -62,11 +62,23 @@ def sensirion_crc(data: bytes) -> int:
 # ====================================================================
 # SHT35 ドライバ
 # ====================================================================
+def detect_sht35(bus: SMBus) -> int:
+    """SHT35 のアドレスを自動検出 (0x44 → 0x45 の順に試す)"""
+    for addr in SHT35_ADDRS:
+        try:
+            bus.i2c_rdwr(i2c_msg.write(addr, [0x24, 0x00]))
+            time.sleep(0.020)
+            bus.i2c_rdwr(i2c_msg.read(addr, 6))
+            return addr
+        except OSError:
+            continue
+    raise IOError(f"SHT35 が見つからない (試したアドレス: {[hex(a) for a in SHT35_ADDRS]})")
+
+
 class SHT35:
-    # 単発測定, クロックストレッチ無効, 高再現性
     CMD_MEASURE_HIGH = (0x24, 0x00)
 
-    def __init__(self, bus: SMBus, addr: int = SHT35_ADDR):
+    def __init__(self, bus: SMBus, addr: int):
         self.bus = bus
         self.addr = addr
 
@@ -214,7 +226,17 @@ def main() -> int:
     write_api = influx.write_api(write_options=SYNCHRONOUS)
 
     bus = SMBus(I2C_BUS)
-    sht = SHT35(bus)
+
+    # SHT35 のアドレス自動検出
+    try:
+        sht_addr = detect_sht35(bus)
+        log.info("SHT35 検出: 0x%02X", sht_addr)
+    except Exception as e:
+        log.error("SHT35 検出失敗: %s", e)
+        bus.close()
+        return 3
+
+    sht = SHT35(bus, sht_addr)
     sps = SPS30(bus)
 
     # SPS30 起動
