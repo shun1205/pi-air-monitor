@@ -124,9 +124,15 @@ ok "Python 依存導入完了"
 
 # ---- 6. systemd サービス配置 ----
 log "systemd サービス配置..."
-cp -f air-monitor.service /etc/systemd/system/air-monitor.service
+# 実ユーザー (TARGET_USER) でテンプレを展開
+sed "s/__USER__/${TARGET_USER}/" air-monitor.service > /etc/systemd/system/air-monitor.service
+chmod 644 /etc/systemd/system/air-monitor.service
 systemctl daemon-reload
-ok "サービスファイル配置完了"
+# 既に enable+failed 状態のサービスを再起動
+if systemctl is-enabled --quiet air-monitor 2>/dev/null; then
+    systemctl restart air-monitor || true
+fi
+ok "サービスファイル配置完了 (User=${TARGET_USER})"
 
 # ---- 7. I2C 動作確認 ----
 log "I2C デバイススキャン..."

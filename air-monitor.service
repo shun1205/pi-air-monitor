@@ -5,7 +5,7 @@ Wants=network-online.target influxdb.service
 
 [Service]
 Type=simple
-User=pi
+User=__USER__
 Group=i2c
 WorkingDirectory=/opt/air-monitor
 EnvironmentFile=/etc/default/air-monitor
