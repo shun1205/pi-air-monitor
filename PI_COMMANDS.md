@@ -225,3 +225,21 @@ sudo rm /etc/default/air-monitor
 # 完全撤去:
 sudo apt purge -y influxdb2 grafana
 ```
+=== センサ疎通テスト (I2C bus 1) ===
+
+[1/3] SHT35 (0x44) を読みます...
+      NG  [Errno 5] Input/output error
+           → i2cdetect -y 1 で 0x44 が見えるか確認
+
+[2/3] SPS30 (0x69) を起動します...
+      OK  測定開始（ファンが回り始めるはず）
+
+[3/3] SPS30 を 10 回連続読み出し (約 10 秒)...
+      （初回 5-10 秒はウォームアップで値が安定しない）
+
+        # |      T |    RH |  PM1.0 |  PM2.5 |  PM4.0 |   PM10 | size
+      ------------------------------------------------------------------------------
+
+      NG  読み出し中にエラー: [Errno 5] Input/output error
+
+=== テスト完了 ===
