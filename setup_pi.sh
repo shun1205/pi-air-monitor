@@ -26,6 +26,16 @@ log "アーキテクチャ: ${ARCH}"
 PROJECT_DIR="/opt/air-monitor"
 TARGET_USER="${SUDO_USER:-pi}"
 
+# ---- 0. 過去の不完全インストールの残骸を掃除 ----
+# 古い InfluxData / Grafana の鍵で apt-get update が止まるのを防ぐ
+log "古いリポジトリ設定をクリーンアップ..."
+rm -f /etc/apt/sources.list.d/influxdata.list
+rm -f /etc/apt/sources.list.d/grafana.list
+rm -f /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg
+rm -f /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+rm -f /etc/apt/trusted.gpg.d/grafana.gpg
+ok "クリーンアップ完了"
+
 # ---- 1. APT 更新と必須パッケージ ----
 log "APT を更新中..."
 apt-get update -qq
