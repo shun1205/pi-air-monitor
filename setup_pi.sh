@@ -36,8 +36,8 @@ apt-get install -y --no-install-recommends \
     python3-smbus \
     curl \
     gnupg \
-    apt-transport-https \
-    software-properties-common
+    ca-certificates \
+    wget
 ok "ベースパッケージ導入完了"
 
 # ---- 2. I2C 有効化 ----
