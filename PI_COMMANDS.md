@@ -243,8 +243,8 @@ sudo rm /etc/default/air-monitor
 sudo apt purge -y influxdb2 grafana
 ```
 
-
-[INFO]  InfluxDB 2.x インストール中...
+kajima1205@raspberrypi:~/pi-air-monitor $ sudo bash setup_pi.sh
+[INFO]  アーキテクチャ: arm64
+[INFO]  APT を更新中...
 W: OpenPGP signature verification failed: https://repos.influxdata.com/debian stable InRelease: Sub-process /usr/bin/sqv returned an error code (1), error message is: Missing key AC10D7449F343ADCEFDDC2B6DA61C26A0585BD3B, which is needed to verify signature.
 E: The repository 'https://repos.influxdata.com/debian stable InRelease' is not signed.
-
